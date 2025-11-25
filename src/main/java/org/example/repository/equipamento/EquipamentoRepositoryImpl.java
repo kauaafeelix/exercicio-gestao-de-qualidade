@@ -3,15 +3,12 @@ package org.example.repository.equipamento;
 import org.example.database.Conexao;
 import org.example.model.Equipamento;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 
 public class EquipamentoRepositoryImpl implements EquipamentoRepository {
 
     @Override
-    public Equipamento criarEquipamento(Equipamento equipamento) throws Exception {
+    public Equipamento criarEquipamento(Equipamento equipamento) throws SQLException {
 
         String sql = """
                 INSERT INTO Equipamento (
@@ -39,7 +36,7 @@ public class EquipamentoRepositoryImpl implements EquipamentoRepository {
     }
 
     @Override
-    public Equipamento buscarEquipamentoPorId(Long id) throws Exception {
+    public Equipamento buscarEquipamentoPorId(Long id) throws SQLException {
 
         String sql = """
                 SELECT 
