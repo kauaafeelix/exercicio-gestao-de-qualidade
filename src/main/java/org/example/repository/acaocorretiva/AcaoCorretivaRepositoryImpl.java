@@ -3,15 +3,12 @@ package org.example.repository.acaocorretiva;
 import org.example.database.Conexao;
 import org.example.model.AcaoCorretiva;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 
 public class AcaoCorretivaRepositoryImpl implements AcaoCorretivaRepository {
 
     @Override
-    public AcaoCorretiva registrarConclusaoDeAcao(AcaoCorretiva acao) throws Exception {
+    public AcaoCorretiva registrarConclusaoDeAcao(AcaoCorretiva acao) throws SQLException {
 
         String sql = """
                 INSERT INTO AcaoCorretiva (

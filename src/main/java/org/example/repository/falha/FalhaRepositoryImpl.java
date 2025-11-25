@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
 public class FalhaRepositoryImpl implements FalhaRepository{
 
     @Override
-    public Falha registrarNovaFalha(Falha falha) throws Exception {
+    public Falha registrarNovaFalha(Falha falha) throws SQLException {
 
         String sql = """
                 INSERT INTO Falha (
@@ -46,7 +47,7 @@ public class FalhaRepositoryImpl implements FalhaRepository{
     }
 
     @Override
-    public List<Falha> buscarFalhasCriticasAbertas() throws Exception {
+    public List<Falha> buscarFalhasCriticasAbertas() throws SQLException {
         List<Falha> falhas = new ArrayList<>();
 
         String sql = """
