@@ -1,7 +1,7 @@
 package org.example.service.equipamento;
 
 import org.example.model.Equipamento;
-import org.example.repository.equipamento.EquipamentoRepositoryImpl;
+import org.example.infraestrutura.repository.equipamento.EquipamentoRepositoryImpl;
 
 import java.sql.SQLException;
 

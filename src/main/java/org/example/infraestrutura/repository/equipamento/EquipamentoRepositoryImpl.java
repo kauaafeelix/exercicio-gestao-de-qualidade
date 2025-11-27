@@ -1,4 +1,4 @@
-package org.example.repository.equipamento;
+package org.example.infraestrutura.repository.equipamento;
 
 import org.example.database.Conexao;
 import org.example.model.Equipamento;
@@ -65,4 +65,24 @@ public class EquipamentoRepositoryImpl implements EquipamentoRepository {
     }
         return null;
     }
+
+    @Override
+    public void atualizarStatusEquipamento(Long idEquipamento, String status) throws SQLException {
+        String sql = """
+                UPDATE Equipamento
+                SET statusOperacional = ?
+                WHERE id = ?
+                """;
+
+        try(Connection conn = Conexao.conectar();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, "EM_MANUTENCAO");
+            ps.setLong(2, idEquipamento);
+            ps.executeUpdate();
+        }
+    }
+
+
+
 }
