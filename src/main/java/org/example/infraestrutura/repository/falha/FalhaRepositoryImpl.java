@@ -84,4 +84,61 @@ public class FalhaRepositoryImpl implements FalhaRepository{
         }
         return falhas;
     }
+
+    @Override
+
+    public Falha buscarFalhaPorId(Long id) throws SQLException{
+        String sql = """
+                SELECT 
+                    id,
+                    equipamentoId,
+                    dataHoraOcorrencia,
+                    descricao,
+                    criticidade,
+                    status,
+                    tempoParadaHoras
+                FROM Falha
+                WHERE id = ?
+                """;
+
+        try(Connection conn = Conexao.conectar();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setLong(1, id);
+
+            ResultSet rs = ps.executeQuery();
+
+            if(rs.next()){
+                Long idFalha = rs.getLong("id");
+                Long equipamentoId = rs.getLong("equipamentoId");
+                LocalDateTime dataHoraOcorrencia = rs.getObject("dataHoraOcorrencia", LocalDateTime.class);
+                String descricao = rs.getString("descricao");
+                String criticidade = rs.getString("criticidade");
+                String status = rs.getString("status");
+                BigDecimal tempoParadaHoras = rs.getBigDecimal("tempoParadaHoras");
+
+                return new Falha(idFalha, equipamentoId, dataHoraOcorrencia, descricao, criticidade, status, tempoParadaHoras);
+            }
+        }
+        return null;
+    }
+
+    @Override
+
+    public void atualizarStatusFalha(Long idFalha, String status) throws SQLException {
+        String sql = """
+                UPDATE Falha
+                SET status = ?
+                WHERE id = ?
+                """;
+
+        try(Connection conn = Conexao.conectar();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, "RESOLVIDA");
+            ps.setLong(2, idFalha);
+            ps.executeUpdate();
+        }
+    }
+
 }

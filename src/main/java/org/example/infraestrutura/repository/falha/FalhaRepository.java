@@ -10,4 +10,8 @@ public interface FalhaRepository {
     Falha registrarNovaFalha(Falha falha) throws SQLException;
 
     List<Falha> buscarFalhasCriticasAbertas() throws SQLException;
+
+    Falha buscarFalhaPorId(Long id) throws SQLException;
+
+    void atualizarStatusFalha(Long id, String status) throws SQLException;
 }
