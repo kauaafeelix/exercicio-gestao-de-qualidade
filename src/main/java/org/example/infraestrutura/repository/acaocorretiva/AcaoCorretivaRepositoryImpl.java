@@ -16,7 +16,7 @@ public class AcaoCorretivaRepositoryImpl implements AcaoCorretivaRepository {
                     dataHoraInicio,
                     dataHoraFim,
                     responsavel,
-                    descricaoAcao
+                    descricaoAcao )
                     VALUES (?, ?, ?, ?, ?)
                 """;
 
