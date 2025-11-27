@@ -1,4 +1,4 @@
-package org.example.repository.acaocorretiva;
+package org.example.infraestrutura.repository.acaocorretiva;
 
 import org.example.model.AcaoCorretiva;
 

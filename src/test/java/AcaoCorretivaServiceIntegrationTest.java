@@ -1,4 +1,4 @@
-import org.example.database.Conexao;
+import org.example.infraestrutura.database.Conexao;
 import org.example.model.AcaoCorretiva;
 import org.example.service.acaocorretiva.AcaoCorretivaService;
 import org.example.service.acaocorretiva.AcaoCorretivaServiceImpl;

@@ -1,4 +1,4 @@
-import org.example.database.Conexao;
+import org.example.infraestrutura.database.Conexao;
 import org.example.dto.EquipamentoContagemFalhasDTO;
 import org.example.dto.FalhaDetalhadaDTO;
 import org.example.dto.RelatorioParadaDTO;

@@ -1,6 +1,6 @@
-package org.example.repository.acaocorretiva;
+package org.example.infraestrutura.repository.acaocorretiva;
 
-import org.example.database.Conexao;
+import org.example.infraestrutura.database.Conexao;
 import org.example.model.AcaoCorretiva;
 
 import java.sql.*;

@@ -1,4 +1,4 @@
-import org.example.database.Conexao;
+import org.example.infraestrutura.database.Conexao;
 import org.example.model.Falha;
 import org.example.service.equipamento.EquipamentoService;
 import org.example.service.equipamento.EquipamentoServiceImpl;

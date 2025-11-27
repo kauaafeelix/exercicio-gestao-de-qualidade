@@ -1,6 +1,6 @@
 package org.example.infraestrutura.repository.falha;
 
-import org.example.database.Conexao;
+import org.example.infraestrutura.database.Conexao;
 import org.example.model.Falha;
 
 import java.math.BigDecimal;

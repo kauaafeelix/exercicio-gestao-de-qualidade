@@ -1,4 +1,4 @@
-package org.example.database;
+package org.example.infraestrutura.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

@@ -1,4 +1,4 @@
-import org.example.database.Conexao;
+import org.example.infraestrutura.database.Conexao;
 
 import java.sql.Connection;
 import java.sql.Statement;

@@ -1,6 +1,6 @@
 package org.example.infraestrutura.repository.equipamento;
 
-import org.example.database.Conexao;
+import org.example.infraestrutura.database.Conexao;
 import org.example.model.Equipamento;
 
 import java.sql.*;
