@@ -77,7 +77,7 @@ public class EquipamentoRepositoryImpl implements EquipamentoRepository {
         try(Connection conn = Conexao.conectar();
             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, "EM_MANUTENCAO");
+            ps.setString(1, status);
             ps.setLong(2, idEquipamento);
             ps.executeUpdate();
         }
