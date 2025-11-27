@@ -1,4 +1,4 @@
-package org.example.repository.falha;
+package org.example.infraestrutura.repository.falha;
 
 import org.example.database.Conexao;
 import org.example.model.Falha;
@@ -25,7 +25,7 @@ public class FalhaRepositoryImpl implements FalhaRepository{
                 criticidade,
                 status,
                 tempoParadaHoras
-                ) VALUES (?, ?, ?, ?, 'ABERTA', ?)
+                ) VALUES (?, ?, ?, ?, ?, ?)
                 """;
 
         try(Connection conn = Conexao.conectar();
@@ -34,7 +34,8 @@ public class FalhaRepositoryImpl implements FalhaRepository{
             ps.setObject(2, falha.getDataHoraOcorrencia());
             ps.setString(3, falha.getDescricao());
             ps.setString(4, falha.getCriticidade());
-            ps.setBigDecimal(5, falha.getTempoParadaHoras());
+            ps.setString(5, falha.getStatus());
+            ps.setBigDecimal(6, falha.getTempoParadaHoras());
             ps.executeUpdate();
 
             ResultSet rs = ps.getGeneratedKeys();

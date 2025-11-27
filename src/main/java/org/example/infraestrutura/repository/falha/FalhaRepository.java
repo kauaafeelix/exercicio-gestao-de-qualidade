@@ -1,4 +1,4 @@
-package org.example.repository.falha;
+package org.example.infraestrutura.repository.falha;
 
 import org.example.model.Falha;
 
