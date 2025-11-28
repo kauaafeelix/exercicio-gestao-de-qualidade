@@ -8,7 +8,7 @@ public interface EquipamentoRepository {
 
     Equipamento criarEquipamento(Equipamento equipamento) throws SQLException;
 
-    Equipamento buscarEquipamentoPorId(Long id) throws SQLException;
+    Equipamento buscarEquipamentoPorId(long id) throws SQLException;
 
-    void atualizarStatusEquipamento(Long equipamento, String status) throws SQLException;
+    void atualizarStatusEquipamento(long equipamento, String status) throws SQLException;
 }

@@ -11,7 +11,7 @@ public interface FalhaRepository {
 
     List<Falha> buscarFalhasCriticasAbertas() throws SQLException;
 
-    Falha buscarFalhaPorId(Long id) throws SQLException;
+    Falha buscarFalhaPorId(long id) throws SQLException;
 
-    void atualizarStatusFalha(Long id, String status) throws SQLException;
+    void atualizarStatusFalha(long id, String status) throws SQLException;
 }

@@ -87,7 +87,7 @@ public class FalhaRepositoryImpl implements FalhaRepository{
 
     @Override
 
-    public Falha buscarFalhaPorId(Long id) throws SQLException{
+    public Falha buscarFalhaPorId(long id) throws SQLException{
         String sql = """
                 SELECT 
                     id,
@@ -125,7 +125,7 @@ public class FalhaRepositoryImpl implements FalhaRepository{
 
     @Override
 
-    public void atualizarStatusFalha(Long idFalha, String status) throws SQLException {
+    public void atualizarStatusFalha(long idFalha, String status) throws SQLException {
         String sql = """
                 UPDATE Falha
                 SET status = ?

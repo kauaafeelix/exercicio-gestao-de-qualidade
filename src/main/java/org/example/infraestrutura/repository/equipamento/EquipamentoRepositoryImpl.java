@@ -28,7 +28,7 @@ public class EquipamentoRepositoryImpl implements EquipamentoRepository {
 
             ResultSet rs = ps.getGeneratedKeys();
             if (rs.next()) {
-                Long idGerado = rs.getLong(1);
+                long idGerado = rs.getLong(1);
                 equipamento.setId(idGerado);
             }
             return equipamento;
@@ -36,7 +36,7 @@ public class EquipamentoRepositoryImpl implements EquipamentoRepository {
     }
 
     @Override
-    public Equipamento buscarEquipamentoPorId(Long id) throws SQLException {
+    public Equipamento buscarEquipamentoPorId(long id) throws SQLException {
 
         String sql = """
                 SELECT 
@@ -55,7 +55,7 @@ public class EquipamentoRepositoryImpl implements EquipamentoRepository {
 
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                Long equipamentoId = rs.getLong("id");
+                long equipamentoId = rs.getLong("id");
                 String nome = rs.getString("nome");
                 String numeroDeSerie = rs.getString("numeroDeSerie");
                 String areaSetor = rs.getString("areaSetor");
@@ -67,7 +67,7 @@ public class EquipamentoRepositoryImpl implements EquipamentoRepository {
     }
 
     @Override
-    public void atualizarStatusEquipamento(Long idEquipamento, String status) throws SQLException {
+    public void atualizarStatusEquipamento(long idEquipamento, String status) throws SQLException {
         String sql = """
                 UPDATE Equipamento
                 SET statusOperacional = ?
