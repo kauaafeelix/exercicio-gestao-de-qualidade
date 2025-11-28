@@ -153,7 +153,7 @@ public class RelatorioServiceTest {
         List<RelatorioParadaDTO> lista = service.gerarRelatorioTempoParada();
 
         assertNotNull(lista);
-        assertEquals(3, lista.size(), "Devem existir dois equipamentos com falhas");
+        assertEquals(2, lista.size(), "Devem existir dois equipamentos com falhas");
 
         RelatorioParadaDTO motor = lista.stream()
                 .filter(x -> x.getNomeEquipamento().equals("Motor Principal"))
