@@ -95,28 +95,28 @@ public class RelatorioRepositoryImpl implements RelatorioRepository{
     }
 
     @Override
-    public Optional<FalhaDetalhadaDTO> buscarDetalhesCompletosFalha(long falhaId)  throws SQLException{
+    public Optional<FalhaDetalhadaDTO> buscarDetalhesCompletosFalha(long falhaId) throws SQLException {
         String sql = """
-                SELECT 
-                    f.id as falha_id,
-                    f.equipamento_id,
-                    f.dataHoraOcorrencia,
-                    f.descricao,
-                    f.criticidade,
-                    f.status,
-                    f.tempoParadaHoras,
-                    e.nome as nome_equipamento,
-                    e.numeroDeSerie,
-                    e.areaSetor,
-                    e.statusOperacional,
-                    ac.id as acao_id,
-                    ac.descricao as acao_descricao,
-                    ac.dataHoraExecucao
-                FROM Falha f
-                JOIN Equipamento e ON f.equipamentoId = e.id
-                LEFT JOIN AcaoCorretiva ac ON f.id = ac.falhaId
-                WHERE f.id = ?
-                """;
+            SELECT 
+                f.id as falha_id,
+                f.equipamento_id,
+                f.dataHoraOcorrencia,
+                f.descricao,
+                f.criticidade,
+                f.status,
+                f.tempoParadaHoras,
+                e.nome as nome_equipamento,
+                e.numeroDeSerie,
+                e.areaSetor,
+                e.statusOperacional,
+                ac.id as acao_id,
+                ac.descricao as acao_descricao,
+                ac.dataHoraExecucao
+            FROM Falha f
+            JOIN Equipamento e ON f.equipamentoId = e.id
+            LEFT JOIN AcaoCorretiva ac ON f.id = ac.falhaId
+            WHERE f.id = ?
+            """;
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -125,34 +125,75 @@ public class RelatorioRepositoryImpl implements RelatorioRepository{
 
             ResultSet rs = ps.executeQuery();
 
-            while (rs.next()){
+            Falha falha = null;
+            Equipamento equipamento = null;
+            List<String> acoesCorretivas = new ArrayList<>();
 
-                Falha falha = new Falha(
-                        rs.getLong("falha_id"),
-                        rs.getLong("equipamento_id"),
-                        rs.getObject("dataHoraOcorrencia", LocalDateTime.class),
-                        rs.getString("descricao"),
-                        rs.getString("criticidade"),
-                        rs.getString("status"),
-                        rs.getBigDecimal("tempoParadaHoras")
-                );
-                Equipamento equipamento = new Equipamento(
-                        rs.getLong("equipamento_id"),
-                        rs.getString("nome_equipamento"),
-                        rs.getString("numeroDeSerie"),
-                        rs.getString("areaSetor"),
-                        rs.getString("statusOperacional")
-                );
-                List<String> acaoCorretiva = null;
+            while (rs.next()) {
+                if (falha == null) {
+                    falha = new Falha(
+                            rs.getLong("falha_id"),
+                            rs.getLong("equipamento_id"),
+                            rs.getObject("dataHoraOcorrencia", LocalDateTime.class),
+                            rs.getString("descricao"),
+                            rs.getString("criticidade"),
+                            rs.getString("status"),
+                            rs.getBigDecimal("tempoParadaHoras")
+                    );
+                }
+                if (equipamento == null) {
+                    equipamento = new Equipamento(
+                            rs.getLong("equipamento_id"),
+                            rs.getString("nome_equipamento"),
+                            rs.getString("numeroDeSerie"),
+                            rs.getString("areaSetor"),
+                            rs.getString("statusOperacional")
+                    );
+                }
+                String acaoDescricao = rs.getString("acao_descricao");
+                if (acaoDescricao != null) {
+                    acoesCorretivas.add(acaoDescricao);
+                }
+            }
 
-                return Optional.of(new FalhaDetalhadaDTO(falha, equipamento, acaoCorretiva));
+            if (falha != null && equipamento != null) {
+                return Optional.of(new FalhaDetalhadaDTO(falha, equipamento, acoesCorretivas));
             }
         }
         return Optional.empty();
     }
 
     @Override
-    public List<EquipamentoContagemFalhasDTO> gerarRelatorioManutencaoPreventiva(int contagemMinimaFalhas)  throws SQLException{
-        return List.of();
+    public List<EquipamentoContagemFalhasDTO> gerarRelatorioManutencaoPreventiva(int contagemMinimaFalhas) throws SQLException {
+        List<EquipamentoContagemFalhasDTO> relatorio = new ArrayList<>();
+
+        String sql = """
+        SELECT e.id AS equipamento_id,
+               e.nome AS equipamento_nome,
+               COUNT(f.id) AS total_falhas
+        FROM equipamentos e
+        JOIN falhas f ON e.id = f.equipamento_id
+        GROUP BY e.id, e.nome
+        HAVING COUNT(f.id) >= ?
+        """;
+
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, contagemMinimaFalhas);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Long equipamentoId = rs.getLong("equipamento_id");
+                String equipamentoNome = rs.getString("equipamento_nome");
+                int totalFalhas = rs.getInt("total_falhas");
+
+                EquipamentoContagemFalhasDTO dto = new EquipamentoContagemFalhasDTO(equipamentoId, equipamentoNome, totalFalhas);
+                relatorio.add(dto);
+            }
+        }
+
+        return relatorio;
     }
 }
