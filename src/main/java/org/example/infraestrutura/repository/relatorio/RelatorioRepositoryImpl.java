@@ -26,15 +26,13 @@ public class RelatorioRepositoryImpl implements RelatorioRepository{
         List<RelatorioParadaDTO> relatorioParada = new ArrayList<>();
 
         String sql = """
-            SELECT e.id AS equipamento_id,
-                   e.nome AS equipamento_nome,
-                   COALESCE(fa.tempo_total, 0) AS tempo_total_parada
-            FROM Equipamento e
-            JOIN (
-                SELECT equipamentoId, SUM(COALESCE(tempoParadaHoras, 0)) AS tempo_total
-                FROM Falha fa
-                GROUP BY equipamentoId
-            ) fa ON e.id = fa.equipamentoId
+                SELECT e.id AS equipamento_id,
+                      e.nome AS equipamento_nome,
+                      SUM(COALESCE(f.tempoParadaHoras, 0)) AS tempo_total_parada
+                FROM Equipamento e
+                JOIN Falha f ON e.id = f.equipamentoId
+                GROUP BY e.id, e.nome
+                                                           
             """;
 
         try (Connection conn = Conexao.conectar();
