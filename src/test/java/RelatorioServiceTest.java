@@ -160,7 +160,7 @@ public class RelatorioServiceTest {
                 .findFirst()
                 .orElseThrow();
 
-        assertEquals(1.5, motor.getTotalHorasParadas());
+        assertEquals(6.5, motor.getTotalHorasParadas());
 
     }
 

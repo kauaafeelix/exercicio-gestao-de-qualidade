@@ -26,32 +26,35 @@ public class RelatorioRepositoryImpl implements RelatorioRepository{
         List<RelatorioParadaDTO> relatorioParada = new ArrayList<>();
 
         String sql = """
-                SELECT e.id AS equipamento_id,
-                       e.nome AS equipamento_nome,
-                       SUM(f.tempo_parada) AS tempo_total_parada
-                FROM equipamentos e
-                JOIN falhas f ON e.id = f.equipamento_id
-                WHERE f.status = 'RESOLVIDA'
-                GROUP BY e.id, e.nome
-                """;
+            SELECT e.id AS equipamento_id,
+                   e.nome AS equipamento_nome,
+                   COALESCE(fa.tempo_total, 0) AS tempo_total_parada
+            FROM Equipamento e
+            JOIN (
+                SELECT equipamentoId, SUM(COALESCE(tempoParadaHoras, 0)) AS tempo_total
+                FROM Falha fa
+                GROUP BY equipamentoId
+            ) fa ON e.id = fa.equipamentoId
+            """;
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ResultSet rs = ps.executeQuery();
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Long equipamentoId = rs.getLong("equipamento_id");
+                    String equipamentoNome = rs.getString("equipamento_nome");
+                    double tempoTotalParada = rs.getDouble("tempo_total_parada");
 
-            while (rs.next()) {
-                Long equipamentoId = rs.getLong("equipamento_id");
-                String equipamentoNome = rs.getString("equipamento_nome");
-                double tempoTotalParada = rs.getDouble("tempo_total_parada");
-
-                RelatorioParadaDTO relatorio = new RelatorioParadaDTO(equipamentoId, equipamentoNome, tempoTotalParada);
-                relatorioParada.add(relatorio);
+                    RelatorioParadaDTO relatorio = new RelatorioParadaDTO(equipamentoId, equipamentoNome, tempoTotalParada);
+                    relatorioParada.add(relatorio);
+                }
             }
         }
 
         return relatorioParada;
     }
+
 
     @Override
     public List<Equipamento> buscarEquipamentosSemFalhasPorPeriodo(LocalDate dataInicio, LocalDate dataFim)  throws SQLException{
@@ -63,11 +66,11 @@ public class RelatorioRepositoryImpl implements RelatorioRepository{
                        e.numeroDeSerie,
                        e.areaSetor,
                        e.statusOperacional
-                FROM equipamentos e
+                FROM Equipamento e
                 WHERE e.id NOT IN (
-                    SELECT f.equipamento_id
-                    FROM falhas f
-                    WHERE f.data_hora_ocorrencia BETWEEN ? AND ?
+                    SELECT f.equipamentoId
+                    FROM Falha f
+                    WHERE f.dataHoraOcorrencia BETWEEN ? AND ?
                 )
                 """;
 
@@ -99,7 +102,7 @@ public class RelatorioRepositoryImpl implements RelatorioRepository{
         String sql = """
             SELECT 
                 f.id as falha_id,
-                f.equipamento_id,
+                f.equipamentoId,
                 f.dataHoraOcorrencia,
                 f.descricao,
                 f.criticidade,
@@ -110,8 +113,10 @@ public class RelatorioRepositoryImpl implements RelatorioRepository{
                 e.areaSetor,
                 e.statusOperacional,
                 ac.id as acao_id,
-                ac.descricao as acao_descricao,
-                ac.dataHoraExecucao
+                ac.descricaoAcao as acao_descricao,
+                ac.dataHoraInicio as acao_data_inicio,
+                ac.dataHoraFim as acao_data_fim,
+                ac.responsavel as acao_responsavel
             FROM Falha f
             JOIN Equipamento e ON f.equipamentoId = e.id
             LEFT JOIN AcaoCorretiva ac ON f.id = ac.falhaId
@@ -133,7 +138,7 @@ public class RelatorioRepositoryImpl implements RelatorioRepository{
                 if (falha == null) {
                     falha = new Falha(
                             rs.getLong("falha_id"),
-                            rs.getLong("equipamento_id"),
+                            rs.getLong("equipamentoId"),
                             rs.getObject("dataHoraOcorrencia", LocalDateTime.class),
                             rs.getString("descricao"),
                             rs.getString("criticidade"),
@@ -143,7 +148,7 @@ public class RelatorioRepositoryImpl implements RelatorioRepository{
                 }
                 if (equipamento == null) {
                     equipamento = new Equipamento(
-                            rs.getLong("equipamento_id"),
+                            rs.getLong("equipamentoId"),
                             rs.getString("nome_equipamento"),
                             rs.getString("numeroDeSerie"),
                             rs.getString("areaSetor"),
@@ -171,8 +176,8 @@ public class RelatorioRepositoryImpl implements RelatorioRepository{
         SELECT e.id AS equipamento_id,
                e.nome AS equipamento_nome,
                COUNT(f.id) AS total_falhas
-        FROM equipamentos e
-        JOIN falhas f ON e.id = f.equipamento_id
+        FROM Equipamento e
+        JOIN Falha f ON e.id = f.equipamentoId
         GROUP BY e.id, e.nome
         HAVING COUNT(f.id) >= ?
         """;
